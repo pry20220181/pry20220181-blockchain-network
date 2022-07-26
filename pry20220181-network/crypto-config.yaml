@@ -1,0 +1,36 @@
+OrdererOrgs:
+    - Name: Orderer
+      Domain: pry20220181.com
+      EnableNodeOUs: true
+      Specs:
+        - Hostname: orderer
+          SANS:
+            - localhost
+PeerOrgs:
+    - Name: SuSalud
+      Domain: susalud.pry20220181.com
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: Minsa
+      Domain: minsa.pry20220181.com
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: Hospitals
+      Domain: hospitals.pry20220181.com
+      EnableNodeOUs: true    
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
