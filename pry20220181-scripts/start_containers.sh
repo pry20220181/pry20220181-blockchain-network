@@ -11,4 +11,4 @@ export CHANNEL_NAME=vaccination
 export VERBOSE=false
 export FABRIC_CFG_PATH=$PWD
 
-sudo CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli-couchdb.yaml up -d
+sudo CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-pry20220181.yaml up -d

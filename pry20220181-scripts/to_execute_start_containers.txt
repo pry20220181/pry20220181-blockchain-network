@@ -1,4 +1,5 @@
-export SCRIPT_PATH='/home/pry20220181/demo-pry20220181-hlf/first-pry20220181-blockchain-hlf/scripts/start_pry20220181_containers.sh'
+#Tengo que estar en la carpeta Network
+export SCRIPT_PATH='/home/pry20220181/GitHub-Repositories/pry20220181-blockchain-network/pry20220181-scripts/start_containers.sh'
 sudo chmod u+x $SCRIPT_PATH
 
 $SCRIPT_PATH
