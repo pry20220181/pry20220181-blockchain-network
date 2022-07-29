@@ -1,0 +1,22 @@
+{
+    "name": "pry20220181-vaccination-control",
+    "version": "1.0.0",
+    "description": "Dose-Administration contract implemented in JavaScript",
+    "main": "index.js",
+    "engines": {
+        "node": ">=12",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "start": "fabric-chaincode-node start"
+    },
+    "engineStrict": true,
+    "author": "PRY20220181",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "fabric-contract-api": "^2.0.0",
+        "fabric-shim": "^2.0.0",
+        "json-stringify-deterministic": "^1.0.1",
+        "sort-keys-recursive": "^2.1.2"
+    }
+}
