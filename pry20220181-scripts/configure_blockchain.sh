@@ -74,7 +74,7 @@ echo "Chaincode $CHAINCODE_NAME iniciado. Ya puede ejecutar queries para guardar
 
 #####Insercion de Registros#####PARA UN RELEASE OFICIAL PODRIA QUITARLO
 echo "Insercion de Registros"
-peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["CreateDose","2ef7c3db-fccc-4830-a75f-8fd375c70et6","2","2","2", "2", "2022-08-21T04:04:37.473Z", "0", "0"]}'
-peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["CreateDose","7e0363db-fccc-4d70-a75f-8fd375c7056d","1","1","1", "1", "2022-08-21T04:04:37.473Z", "0", "0"]}'
-peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["CreateDose","6e0753db-fccc-4830-a75f-8fd375c7057g","2","1","1", "2", "2022-08-21T04:04:37.473Z", "0", "0"]}'
+peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["RegisterDoseAdministration","2ef7c3db-fccc-4830-a75f-8fd375c70et6","2","2","2", "2", "2022-08-21T04:04:37.473Z", "0", "0"]}'
+peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["RegisterDoseAdministration","7e0363db-fccc-4d70-a75f-8fd375c7056d","1","1","1", "1", "2022-08-21T04:04:37.473Z", "0", "0"]}'
+peer chaincode invoke -o orderer.pry20220181.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["RegisterDoseAdministration","6e0753db-fccc-4830-a75f-8fd375c7057g","2","1","1", "2", "2022-08-21T04:04:37.473Z", "0", "0"]}'
 ################################

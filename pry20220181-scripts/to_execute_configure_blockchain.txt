@@ -1,3 +1,4 @@
+#Ruta inicial donde debe ejecutarse: /opt/gopath/src/github.com/hyperledger/fabric/peer
 export SCRIPT_PATH='./../configuration/scripts/configure_blockchain.sh'
 chmod u+x $SCRIPT_PATH
 
