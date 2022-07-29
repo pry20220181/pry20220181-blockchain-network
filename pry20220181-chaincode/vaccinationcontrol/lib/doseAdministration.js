@@ -7,8 +7,8 @@
 'use strict';
 
 // Deterministic JSON.stringify()
-const stringify  = require('json-stringify-deterministic');
-const sortKeysRecursive  = require('sort-keys-recursive');
+const stringify = require('json-stringify-deterministic');
+const sortKeysRecursive = require('sort-keys-recursive');
 const { Contract } = require('fabric-contract-api');
 const { randomUUID } = require('crypto')
 
@@ -19,7 +19,7 @@ class DoseAdministration extends Contract {
         const AdministeredDoses = [
             //#region CHILD 1
             {
-                ID: randomUUID(),
+                ID: 'd7028f69-8ca9-4c75-b35e-cff302b24067',
                 DoseId: '1',
                 ChildId: '1',
                 HealthCenterId: '1',
@@ -29,7 +29,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: 'a4d5668a-24aa-411d-ad83-cb99333e79a7',
                 DoseId: '2',
                 ChildId: '1',
                 HealthCenterId: '1',
@@ -39,7 +39,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: '1c7ccb39-b77e-4528-9b78-db7634023af2',
                 DoseId: '3',
                 ChildId: '1',
                 HealthCenterId: '2',
@@ -49,7 +49,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: 'd128789d-d598-4d53-b895-4d7c90e854b4',
                 DoseId: '4',
                 ChildId: '1',
                 HealthCenterId: '2',
@@ -59,7 +59,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: '29dcfbe2-7887-4f13-9e67-ffb14df7cdaf',
                 DoseId: '5',
                 ChildId: '1',
                 HealthCenterId: '1',
@@ -71,7 +71,7 @@ class DoseAdministration extends Contract {
             //#endregion
             //#region CHILD 2
             {
-                ID: randomUUID(),
+                ID: 'cc5bcc2f-576e-4f72-b2eb-0aa39f17466c',
                 DoseId: '1',
                 ChildId: '2',
                 HealthCenterId: '1',
@@ -81,7 +81,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: '7c9fffae-1fc0-45d1-b4cd-ad1bc11f7455',
                 DoseId: '2',
                 ChildId: '2',
                 HealthCenterId: '1',
@@ -91,7 +91,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: '25d1ff31-1e11-47e6-8a46-167d320588d6',
                 DoseId: '3',
                 ChildId: '2',
                 HealthCenterId: '2',
@@ -101,7 +101,7 @@ class DoseAdministration extends Contract {
                 VaccinationAppointmentId: '0'
             },
             {
-                ID: randomUUID(),
+                ID: 'b0bcf9f9-47e5-4204-8d47-dafc128b088d',
                 DoseId: '4',
                 ChildId: '2',
                 HealthCenterId: '2',
@@ -131,7 +131,7 @@ class DoseAdministration extends Contract {
     vaccinationCampaignId (FK, NN)
     vaccinationAppointmentId (FK, NN) 
     */
-    async CreateDose(ctx, administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId) {
+    async RegisterDoseAdministration(ctx, administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId) {
         const exists = await this.DoseExists(ctx, administeredDoseId);
         if (exists) {
             throw new Error(`The Dose ${administeredDoseId} already exists`);
@@ -152,11 +152,13 @@ class DoseAdministration extends Contract {
         return JSON.stringify(Dose);
     }
 
-    async ReadDosesByChildId(ctx, childId){
+    async ReadAdministeredDosesByChildId(ctx, childId) {
+        childId = parseInt(childId);
         const query = `{"selector": {"ChildId": {"$eq": "${childId}"}}}`
         const allResults = [];
         const iterator = await ctx.stub.getQueryResult(query);
         let result = await iterator.next();
+
         while (!result.done) {
             const strValue = Buffer.from(result.value.value.toString()).toString('utf8');
             let record;
@@ -169,6 +171,7 @@ class DoseAdministration extends Contract {
             allResults.push(record);
             result = await iterator.next();
         }
+
         return JSON.stringify(allResults);
     }
     //#endregion
