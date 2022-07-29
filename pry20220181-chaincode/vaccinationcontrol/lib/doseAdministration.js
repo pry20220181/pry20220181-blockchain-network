@@ -131,7 +131,8 @@ class DoseAdministration extends Contract {
     vaccinationCampaignId (FK, NN)
     vaccinationAppointmentId (FK, NN) 
     */
-    async RegisterDoseAdministration(ctx, administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId) {
+    async RegisterDoseAdministration(ctx, administeredDoseId, doseId, childId
+        , healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId) {
         const exists = await this.DoseExists(ctx, administeredDoseId);
         if (exists) {
             throw new Error(`The Dose ${administeredDoseId} already exists`);
