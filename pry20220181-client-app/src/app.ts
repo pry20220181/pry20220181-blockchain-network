@@ -15,22 +15,23 @@ const PATHS = {
 
 fastify.get(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
   console.log(request.query);
+  const { childId } = request.query;
 
-  return {result: 1};
-  // let result = await main().catch(error => {
-  //     console.error('******** FAILED to run the application:', error);
-  //     process.exitCode = 1;
-  // }); 
-  // let blockchain = new Pry20220181Blockchain();
-  // blockchain.displayInputParameters();
-  // let result = null;
-  // // let result = "prueba host to vm"
-  // console.log("A retornar: ", result);
-  // return { hello: 'world', result: result }
+  try {
+    let blockchainNetwork = new Pry20220181Blockchain();
+
+    let administeredDoses = await blockchainNetwork.getAllAdministeredDosesByChildId(childId);
+
+    return administeredDoses;
+  } 
+  catch (error: any) {
+    console.log(error.message);
+    return {'error': error.message} 
+  }
 })
 
 fastify.post(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
-  var administeredDose =  new AdministeredDose();
+  var administeredDose =  new AdministeredDose(randomUUID());
   Object.assign(administeredDose, request.body);
 
   try {
