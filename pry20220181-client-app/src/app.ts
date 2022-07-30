@@ -8,6 +8,18 @@ const fastify = Fastify({
   logger: true
 })
 
+const API_KEY = 'pry20220181';
+
+fastify.addHook('onRequest', async (request, reply) => {
+  const apiKey = request.headers['api-key'];
+  if(apiKey != API_KEY){
+    console.log(`THE KEY ${apiKey} IS NOT VALID`)
+    reply.statusCode = 403;
+    reply.send({ message: 'The key is invalid' })
+    return reply;
+  }
+})
+
 const PATHS = {
   ADMINISTERED_DOSES: '/administered-doses'
 }
