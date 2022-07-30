@@ -107,22 +107,29 @@ export class Pry20220181Blockchain {
     /**
      * Evaluate a transaction to query ledger state filtering by childId.
      */
-    async getAllAdministeredDosesByChildId(childId: string): Promise<any> {
-        console.log('\n--> Evaluate Transaction: ReadDosesByChildId, function returns all the doses of the specified child on the ledger');
+    async getAllAdministeredDosesByChildId(childId: number): Promise<Array<AdministeredDose>> {
+        console.log('\n--> Evaluate Transaction: ReadAdministeredDosesByChildId, function returns all the administered doses of the specified child on the ledger');
 
-        const resultBytes = await this.contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId);
-
+        const resultBytes = await this.contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
         const resultJson = this.utf8Decoder.decode(resultBytes);
         const result = JSON.parse(resultJson);
+        const numberOfAdministeredDoses = result.length;
         //console.log(`*** Result (Doses of the Child ${childId}):`, result);
-        return result;
+
+        let administeredDosesToReturn = new Array<AdministeredDose>();
+
+        for (let i = 0; i < numberOfAdministeredDoses; i++) {
+            const element = result[i];
+            administeredDosesToReturn.push(new AdministeredDose())
+        }
+        return administeredDosesToReturn;
     }
 
     /**
      * Submit a transaction synchronously, blocking until it has been committed to the ledger.
      */
     async registerDoseAdministration(administeredDose: AdministeredDose): Promise<void> {
-        console.log('\n--> Submit Transaction: CreateDose, creates new dose with ID, Color, Size, Owner and AppraisedValue arguments');
+        console.log('\n--> Submit Transaction: RegisterDoseAdministration, creates new administered dose with administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId arguments');
 
         //#region VALIDATE REQUIRED FIELDS ADMINISTERED DOSE
         if(!(administeredDose.doseId > 0)){
@@ -137,7 +144,7 @@ export class Pry20220181Blockchain {
         if(!(administeredDose.healthPersonnelId > 0)){
             throw new Error('HealthPersonnelId is required');
         }
-        //#endregion
+        //#endregion 
 
         // await this.contract.submitTransaction(
         //     'RegisterDoseAdministration',
@@ -151,7 +158,7 @@ export class Pry20220181Blockchain {
         //     administeredDose.vaccinationAppointmentId.toString(),
         // );
 
-        console.log('*** Transaction committed successfully');
+        console.log('*** Transaction RegisterDoseAdministration committed successfully');
     }
 
 

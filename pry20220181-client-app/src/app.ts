@@ -35,11 +35,14 @@ fastify.post(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
 
   try {
     let blockchainNetwork = new Pry20220181Blockchain();
+
     await blockchainNetwork.registerDoseAdministration(administeredDose);
+
     return administeredDose;
-  } catch (error: any) {
+  } 
+  catch (error: any) {
     console.log(error.message);
-   return {'error': error.message} 
+    return {'error': error.message} 
   }
 })
 
