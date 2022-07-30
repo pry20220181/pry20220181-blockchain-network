@@ -65,11 +65,6 @@ export class Pry20220181Blockchain {
     client: grpc.Client;
     gateway: Gateway; 
 
-    constructor() {
-        //TODO: Put all the logic to stablsish the connection with the BLockchain here
-
-        
-    }
 
     //#region Constants    
     readonly channelName = this.envOrDefault('CHANNEL_NAME', 'vaccination');
@@ -97,128 +92,115 @@ export class Pry20220181Blockchain {
     readonly utf8Decoder = new TextDecoder();
     //#endregion
 
-
-    /**
-     * This type of transaction would typically only be run once by an application the first time it was started after its
-     * initial deployment. A new version of the chaincode deployed later would likely not need to run an "init" function.
-     */
-    //TODO> Pasar esto para hacerlo desde el script que levanta la Blockchain
-    // async initLedger(): Promise<void> {
-    //     console.log('\n--> Submit Transaction: InitLedger, function creates the initial set of doses on the ledger');
-
-    //     await this.contract.submitTransaction('InitLedger');
-
-    //     console.log('*** Transaction committed successfully');
-    // }
-
     /**
      * Evaluate a transaction to query ledger state filtering by childId.
      */
+    //Performance Notes: al llamar desde la API responde rapido, menos de 1 segundo para retornar la data
     async getAllAdministeredDosesByChildId(childId: number): Promise<Array<AdministeredDose>> {
         let contract = await this.StablishConnectionWithBlockchain();
         console.log(`\n--> Evaluate Transaction: ReadAdministeredDosesByChildId, function returns all the administered doses of the child with ID ${childId} on the ledger`);
 
-        // const resultBytes = await contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
-        // const resultJson = this.utf8Decoder.decode(resultBytes);
-        // const result = JSON.parse(resultJson);
-        const result = [
-            //#region CHILD 1
-            {
-                ID: 'd7028f69-8ca9-4c75-b35e-cff302b24067',
-                DoseId: '1',
-                ChildId: '1',
-                HealthCenterId: '1',
-                HealthPersonnelId: '1',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: 'a4d5668a-24aa-411d-ad83-cb99333e79a7',
-                DoseId: '2',
-                ChildId: '1',
-                HealthCenterId: '1',
-                HealthPersonnelId: '2',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: '1c7ccb39-b77e-4528-9b78-db7634023af2',
-                DoseId: '3',
-                ChildId: '1',
-                HealthCenterId: '2',
-                HealthPersonnelId: '3',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: 'd128789d-d598-4d53-b895-4d7c90e854b4',
-                DoseId: '4',
-                ChildId: '1',
-                HealthCenterId: '2',
-                HealthPersonnelId: '3',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: '29dcfbe2-7887-4f13-9e67-ffb14df7cdaf',
-                DoseId: '5',
-                ChildId: '1',
-                HealthCenterId: '1',
-                HealthPersonnelId: '2',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            //#endregion
-            //#region CHILD 2
-            {
-                ID: 'cc5bcc2f-576e-4f72-b2eb-0aa39f17466c',
-                DoseId: '1',
-                ChildId: '2',
-                HealthCenterId: '1',
-                HealthPersonnelId: '2',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: '7c9fffae-1fc0-45d1-b4cd-ad1bc11f7455',
-                DoseId: '2',
-                ChildId: '2',
-                HealthCenterId: '1',
-                HealthPersonnelId: '1',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: '25d1ff31-1e11-47e6-8a46-167d320588d6',
-                DoseId: '3',
-                ChildId: '2',
-                HealthCenterId: '2',
-                HealthPersonnelId: '2',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            },
-            {
-                ID: 'b0bcf9f9-47e5-4204-8d47-dafc128b088d',
-                DoseId: '4',
-                ChildId: '2',
-                HealthCenterId: '2',
-                HealthPersonnelId: '2',
-                DoseDate: new Date().toISOString(),
-                VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
-            }
-            //#endregion
-        ];
+        const resultBytes = await contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
+        const resultJson = this.utf8Decoder.decode(resultBytes);
+        const result = JSON.parse(resultJson);
+        // const result = [
+        //     //#region CHILD 1
+        //     {
+        //         ID: 'd7028f69-8ca9-4c75-b35e-cff302b24067',
+        //         DoseId: '1',
+        //         ChildId: '1',
+        //         HealthCenterId: '1',
+        //         HealthPersonnelId: '1',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: 'a4d5668a-24aa-411d-ad83-cb99333e79a7',
+        //         DoseId: '2',
+        //         ChildId: '1',
+        //         HealthCenterId: '1',
+        //         HealthPersonnelId: '2',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: '1c7ccb39-b77e-4528-9b78-db7634023af2',
+        //         DoseId: '3',
+        //         ChildId: '1',
+        //         HealthCenterId: '2',
+        //         HealthPersonnelId: '3',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: 'd128789d-d598-4d53-b895-4d7c90e854b4',
+        //         DoseId: '4',
+        //         ChildId: '1',
+        //         HealthCenterId: '2',
+        //         HealthPersonnelId: '3',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: '29dcfbe2-7887-4f13-9e67-ffb14df7cdaf',
+        //         DoseId: '5',
+        //         ChildId: '1',
+        //         HealthCenterId: '1',
+        //         HealthPersonnelId: '2',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     //#endregion
+        //     //#region CHILD 2
+        //     {
+        //         ID: 'cc5bcc2f-576e-4f72-b2eb-0aa39f17466c',
+        //         DoseId: '1',
+        //         ChildId: '2',
+        //         HealthCenterId: '1',
+        //         HealthPersonnelId: '2',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: '7c9fffae-1fc0-45d1-b4cd-ad1bc11f7455',
+        //         DoseId: '2',
+        //         ChildId: '2',
+        //         HealthCenterId: '1',
+        //         HealthPersonnelId: '1',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: '25d1ff31-1e11-47e6-8a46-167d320588d6',
+        //         DoseId: '3',
+        //         ChildId: '2',
+        //         HealthCenterId: '2',
+        //         HealthPersonnelId: '2',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     },
+        //     {
+        //         ID: 'b0bcf9f9-47e5-4204-8d47-dafc128b088d',
+        //         DoseId: '4',
+        //         ChildId: '2',
+        //         HealthCenterId: '2',
+        //         HealthPersonnelId: '2',
+        //         DoseDate: new Date().toISOString(),
+        //         VaccinationCampaignId: '0',
+        //         VaccinationAppointmentId: '0'
+        //     }
+        //     //#endregion
+        // ];
         const numberOfAdministeredDoses = result.length;
-        //console.log(`*** Result (Doses of the Child ${childId}):`, result);
+        console.log(`*** Result (Doses of the Child ${childId}):`, result);
 
         let administeredDosesToReturn = new Array<AdministeredDose>();
 
@@ -235,6 +217,12 @@ export class Pry20220181Blockchain {
     /**
      * Submit a transaction synchronously, blocking until it has been committed to the ledger.
      */
+    //Performance Notes: al llamar desde la API se demora entre 2 a 4 segundos
+    //Esto se demora mas porque esta transaccion tiene que ser validada por todos los Peers, escribir a la blockchain y tal
+    //Posibles ideas de mejora
+    //1. En el smart contract quitar la validacion de si existe el GUID
+    //2. Quitar los ToString, en la clase cambiar todo a Strig
+    //3. QUitar el return en el smart contract, de paso se elimina el stringiy
     async registerDoseAdministration(administeredDose: AdministeredDose): Promise<void> {
         let contract = await this.StablishConnectionWithBlockchain();
         console.log('\n--> Submit Transaction: RegisterDoseAdministration, creates new administered dose with administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId arguments');
@@ -254,17 +242,17 @@ export class Pry20220181Blockchain {
         }
         //#endregion 
 
-        // await contract.submitTransaction(
-        //     'RegisterDoseAdministration',
-        //     administeredDose.administeredDoseId,
-        //     administeredDose.doseId.toString(),
-        //     administeredDose.childId.toString(),
-        //     administeredDose.healthCenterId.toString(),
-        //     administeredDose.healthPersonnelId.toString(),
-        //     administeredDose.doseDate.toString(),
-        //     administeredDose.vaccinationCampaignId.toString(),
-        //     administeredDose.vaccinationAppointmentId.toString(),
-        // );
+        await contract.submitTransaction(
+            'RegisterDoseAdministration',
+            administeredDose.administeredDoseId,
+            administeredDose.doseId.toString(),
+            administeredDose.childId.toString(),
+            administeredDose.healthCenterId.toString(),
+            administeredDose.healthPersonnelId.toString(),
+            administeredDose.doseDate,
+            administeredDose.vaccinationCampaignId.toString(),
+            administeredDose.vaccinationAppointmentId.toString(),
+        );
 
         console.log('*** Transaction RegisterDoseAdministration committed successfully');
         await this.CloseConnectionWithBlockchain();
@@ -273,7 +261,7 @@ export class Pry20220181Blockchain {
     private async StablishConnectionWithBlockchain() : Promise<Contract> {
         // The gRPC client connection should be shared by all Gateway connections to this endpoint.
         this.client = await this.newGrpcConnection();
-
+        const client = this.client
         this.gateway = connect({
             client,
             identity: await this.newIdentity(),
