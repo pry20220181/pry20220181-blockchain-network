@@ -125,16 +125,16 @@ export class Pry20220181Blockchain {
         console.log('\n--> Submit Transaction: CreateDose, creates new dose with ID, Color, Size, Owner and AppraisedValue arguments');
 
         //#region VALIDATE REQUIRED FIELDS ADMINISTERED DOSE
-        if(administeredDose.doseId == 0){
+        if(!(administeredDose.doseId > 0)){
             throw new Error('DoseId is required');
         }
-        if(administeredDose.childId == 0){
+        if(!(administeredDose.childId > 0)){
             throw new Error('ChildId is required');
         }
-        if(administeredDose.healthCenterId == 0){
+        if(!(administeredDose.healthCenterId > 0)){
             throw new Error('HealthCenterId is required');
         }
-        if(administeredDose.healthPersonnelId == 0){
+        if(!(administeredDose.healthPersonnelId > 0)){
             throw new Error('HealthPersonnelId is required');
         }
         //#endregion
@@ -203,7 +203,7 @@ export class Pry20220181Blockchain {
 
             // Return all the doses of the specified child on the ledger.
             // await getAllDosesByChildId(contract,'1');
-            result = await this.getAllAdministeredDosesByChildId(contract, '2');
+            result = await this.getAllAdministeredDosesByChildId('2');
             console.log("Call REsult: ", result);
             // // Update an existing dose asynchronously.
             // await transferDoseAsync(contract);
