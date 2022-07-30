@@ -22,12 +22,16 @@ class AdministeredDose {
   vaccinationCampaignId: number;
   vaccinationAppointmentId: number;
 
-  constructor(doseId? : number, childId? : number, healthCenterId? : number){
+  constructor(doseId? : number, childId? : number, healthCenterId? : number, healthPersonnelId? : number, doseDate? : string, vaccinationCampaignId? : number, vaccinationAppointmentId? : number){
     this.administeredDoseId = randomUUID();
-    this.doseId = doseId ?? ;
+    this.doseId = doseId ?? 0;
     this.childId = childId ?? 0;
-    this.healthCenterId = healthCenterId ?? 
-}
+    this.healthCenterId = healthCenterId ?? 0;
+    this.healthPersonnelId = healthPersonnelId ?? 0;
+    this.doseDate = doseDate ?? '';
+    this.vaccinationCampaignId = vaccinationCampaignId ?? 0;
+    this.vaccinationAppointmentId = vaccinationAppointmentId ?? 0;
+  }
 }
 
 
@@ -48,13 +52,11 @@ fastify.get(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
 })
 
 fastify.post(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
-  var animalObj =  new Animal();
-  console.log(animalObj.getEyes());
-  Object.assign(animalObj, JSON.parse(jsonString));
-  console.log('ID', randomUUID())
-  let administeredDose = request.body; 
-  console.log(administeredDose.ChildId);
-  return {result: 1};
+  console.log(request.body)
+  var administeredDose =  new AdministeredDose();
+  Object.assign(administeredDose, request.body);
+  // console.log(administeredDose);
+  return administeredDose;
 })
 
 /**
