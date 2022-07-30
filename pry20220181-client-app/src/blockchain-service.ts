@@ -1,17 +1,72 @@
 import * as grpc from '@grpc/grpc-js';
-import { connect, Contract, Identity, Signer, signers } from '@hyperledger/fabric-gateway';
+import { connect, Contract, Identity, Proposal, ProposalOptions, Signer, signers, SubmittedTransaction } from '@hyperledger/fabric-gateway';
 import * as crypto from 'crypto';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { TextDecoder } from 'util';
 
+export class AdministeredDose {
+    administeredDoseId: string;
+    doseId: number;
+    childId: number;
+    healthCenterId: number;
+    healthPersonnelId: number;
+    doseDate: string;
+    vaccinationCampaignId: number;
+    vaccinationAppointmentId: number;
+  
+    constructor(doseId? : number, childId? : number, healthCenterId? : number, healthPersonnelId? : number, doseDate? : string, vaccinationCampaignId? : number, vaccinationAppointmentId? : number){
+      this.administeredDoseId = crypto.randomUUID();
+      this.doseId = doseId ?? 0;
+      this.childId = childId ?? 0;
+      this.healthCenterId = healthCenterId ?? 0;
+      this.healthPersonnelId = healthPersonnelId ?? 0;
+      this.doseDate = doseDate ?? new Date().toISOString();
+      this.vaccinationCampaignId = vaccinationCampaignId ?? 0;
+      this.vaccinationAppointmentId = vaccinationAppointmentId ?? 0;
+    }
+  }
+
+class ContractDummy implements Contract{
+    getChaincodeName(): string {
+        throw new Error('Method not implemented.');
+    }
+    getContractName(): string | undefined {
+        throw new Error('Method not implemented.');
+    }
+    evaluateTransaction(name: string, ...args: (string | Uint8Array)[]): Promise<Uint8Array> {
+        throw new Error('Method not implemented.');
+    }
+    submitTransaction(name: string, ...args: (string | Uint8Array)[]): Promise<Uint8Array> {
+        throw new Error('Method not implemented.');
+    }
+    evaluate(transactionName: string, options?: ProposalOptions | undefined): Promise<Uint8Array> {
+        throw new Error('Method not implemented.');
+    }
+    submit(transactionName: string, options?: ProposalOptions | undefined): Promise<Uint8Array> {
+        throw new Error('Method not implemented.');
+    }
+    submitAsync(transactionName: string, options?: ProposalOptions | undefined): Promise<SubmittedTransaction> {
+        throw new Error('Method not implemented.');
+    }
+    newProposal(transactionName: string, options?: ProposalOptions | undefined): Proposal {
+        throw new Error('Method not implemented.');
+    }
+}
 export class Pry20220181Blockchain {
     /*
  * Copyright IBM Corp. All Rights Reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+    contract: Contract;
 
+    constructor() {
+        //TODO: Put all the logic to stablsish the connection with the BLockchain here
+        this.contract = new ContractDummy();
+    }
+
+    //#region Constants    
     readonly channelName = this.envOrDefault('CHANNEL_NAME', 'vaccination');
     readonly chaincodeName = this.envOrDefault('CHAINCODE_NAME', 'vaccinationcontrol');
     readonly mspId = this.envOrDefault('MSP_ID', 'MinsaMSP');
@@ -35,25 +90,27 @@ export class Pry20220181Blockchain {
     readonly peerHostAlias = this.envOrDefault('PEER_HOST_ALIAS', 'peer0.minsa.pry20220181.com');
 
     readonly utf8Decoder = new TextDecoder();
+    //#endregion
+
 
     /**
      * This type of transaction would typically only be run once by an application the first time it was started after its
      * initial deployment. A new version of the chaincode deployed later would likely not need to run an "init" function.
      */
-    async initLedger(contract: Contract): Promise<void> {
+    async initLedger(): Promise<void> {
         console.log('\n--> Submit Transaction: InitLedger, function creates the initial set of doses on the ledger');
 
-        await contract.submitTransaction('InitLedger');
+        await this.contract.submitTransaction('InitLedger');
 
         console.log('*** Transaction committed successfully');
     }
     /**
      * Evaluate a transaction to query ledger state filtering by childId.
      */
-    async getAllAdministeredDosesByChildId(contract: Contract, childId: string): Promise<any> {
+    async getAllAdministeredDosesByChildId(childId: string): Promise<any> {
         console.log('\n--> Evaluate Transaction: ReadDosesByChildId, function returns all the doses of the specified child on the ledger');
 
-        const resultBytes = await contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId);
+        const resultBytes = await this.contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId);
 
         const resultJson = this.utf8Decoder.decode(resultBytes);
         const result = JSON.parse(resultJson);
@@ -64,19 +121,35 @@ export class Pry20220181Blockchain {
     /**
      * Submit a transaction synchronously, blocking until it has been committed to the ledger.
      */
-    async registerDoseAdministration(contract: Contract, administeredDoseId: string): Promise<void> {
+    async registerDoseAdministration(administeredDose: AdministeredDose): Promise<void> {
         console.log('\n--> Submit Transaction: CreateDose, creates new dose with ID, Color, Size, Owner and AppraisedValue arguments');
-        await contract.submitTransaction(
-            'RegisterDoseAdministration',
-            administeredDoseId,
-            '2',
-            '2',
-            '2',
-            '2',
-            '2022-08-21T04:04:37.473Z',
-            '0',
-            '0'
-        );
+
+        //#region VALIDATE REQUIRED FIELDS ADMINISTERED DOSE
+        if(administeredDose.doseId == 0){
+            throw new Error('DoseId is required');
+        }
+        if(administeredDose.childId == 0){
+            throw new Error('ChildId is required');
+        }
+        if(administeredDose.healthCenterId == 0){
+            throw new Error('HealthCenterId is required');
+        }
+        if(administeredDose.healthPersonnelId == 0){
+            throw new Error('HealthPersonnelId is required');
+        }
+        //#endregion
+
+        // await this.contract.submitTransaction(
+        //     'RegisterDoseAdministration',
+        //     administeredDose.administeredDoseId,
+        //     administeredDose.doseId.toString(),
+        //     administeredDose.childId.toString(),
+        //     administeredDose.healthCenterId.toString(),
+        //     administeredDose.healthPersonnelId.toString(),
+        //     administeredDose.doseDate.toString(),
+        //     administeredDose.vaccinationCampaignId.toString(),
+        //     administeredDose.vaccinationAppointmentId.toString(),
+        // );
 
         console.log('*** Transaction committed successfully');
     }
@@ -117,10 +190,10 @@ export class Pry20220181Blockchain {
             const network = gateway.getNetwork(this.channelName);
 
             // Get the smart contract from the network.
-            const contract = network.getContract(this.chaincodeName);
+            this.contract = network.getContract(this.chaincodeName);
 
             // Initialize a set of dose data on the ledger using the chaincode 'InitLedger' function.
-            await this.initLedger(contract);
+            await this.initLedger();
 
             // // Return all the current doses on the ledger.
             // await getAllDoses(contract);

@@ -1,7 +1,7 @@
 //#region Config Fastify web server
 // ESM
 import Fastify from 'fastify'
-import { Pry20220181Blockchain } from './blockchain-service'
+import { Pry20220181Blockchain, AdministeredDose } from './blockchain-service'
 import { randomUUID } from 'crypto'
 
 const fastify = Fastify({
@@ -10,28 +10,6 @@ const fastify = Fastify({
 
 const PATHS = {
   ADMINISTERED_DOSES: '/administered-doses'
-}
-
-class AdministeredDose {
-  administeredDoseId: string;
-  doseId: number;
-  childId: number;
-  healthCenterId: number;
-  healthPersonnelId: number;
-  doseDate: string;
-  vaccinationCampaignId: number;
-  vaccinationAppointmentId: number;
-
-  constructor(doseId? : number, childId? : number, healthCenterId? : number, healthPersonnelId? : number, doseDate? : string, vaccinationCampaignId? : number, vaccinationAppointmentId? : number){
-    this.administeredDoseId = randomUUID();
-    this.doseId = doseId ?? 0;
-    this.childId = childId ?? 0;
-    this.healthCenterId = healthCenterId ?? 0;
-    this.healthPersonnelId = healthPersonnelId ?? 0;
-    this.doseDate = doseDate ?? '';
-    this.vaccinationCampaignId = vaccinationCampaignId ?? 0;
-    this.vaccinationAppointmentId = vaccinationAppointmentId ?? 0;
-  }
 }
 
 
@@ -52,11 +30,16 @@ fastify.get(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
 })
 
 fastify.post(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
-  console.log(request.body)
   var administeredDose =  new AdministeredDose();
   Object.assign(administeredDose, request.body);
-  // console.log(administeredDose);
-  return administeredDose;
+
+  try {
+    let blockchainNetwork = new Pry20220181Blockchain();
+    await blockchainNetwork.registerDoseAdministration(administeredDose);
+    return administeredDose;
+  } catch (error) {
+   return {'error': error} 
+  }
 })
 
 /**
