@@ -1,5 +1,5 @@
 import * as grpc from '@grpc/grpc-js';
-import { connect, Contract, Identity, Proposal, ProposalOptions, Signer, signers, SubmittedTransaction } from '@hyperledger/fabric-gateway';
+import { connect, Contract, Gateway, Identity, Proposal, ProposalOptions, Signer, signers, SubmittedTransaction } from '@hyperledger/fabric-gateway';
 import * as crypto from 'crypto';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -54,17 +54,21 @@ class ContractDummy implements Contract{
         throw new Error('Method not implemented.');
     }
 }
+
 export class Pry20220181Blockchain {
     /*
  * Copyright IBM Corp. All Rights Reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-    contract: Contract;
+    // contract: Contract;
+    client: grpc.Client;
+    gateway: Gateway; 
 
     constructor() {
         //TODO: Put all the logic to stablsish the connection with the BLockchain here
-        this.contract = new ContractDummy();
+
+        
     }
 
     //#region Constants    
@@ -98,20 +102,23 @@ export class Pry20220181Blockchain {
      * This type of transaction would typically only be run once by an application the first time it was started after its
      * initial deployment. A new version of the chaincode deployed later would likely not need to run an "init" function.
      */
-    async initLedger(): Promise<void> {
-        console.log('\n--> Submit Transaction: InitLedger, function creates the initial set of doses on the ledger');
+    //TODO> Pasar esto para hacerlo desde el script que levanta la Blockchain
+    // async initLedger(): Promise<void> {
+    //     console.log('\n--> Submit Transaction: InitLedger, function creates the initial set of doses on the ledger');
 
-        await this.contract.submitTransaction('InitLedger');
+    //     await this.contract.submitTransaction('InitLedger');
 
-        console.log('*** Transaction committed successfully');
-    }
+    //     console.log('*** Transaction committed successfully');
+    // }
+
     /**
      * Evaluate a transaction to query ledger state filtering by childId.
      */
     async getAllAdministeredDosesByChildId(childId: number): Promise<Array<AdministeredDose>> {
+        let contract = await this.StablishConnectionWithBlockchain();
         console.log(`\n--> Evaluate Transaction: ReadAdministeredDosesByChildId, function returns all the administered doses of the child with ID ${childId} on the ledger`);
 
-        // const resultBytes = await this.contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
+        // const resultBytes = await contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
         // const resultJson = this.utf8Decoder.decode(resultBytes);
         // const result = JSON.parse(resultJson);
         const result = [
@@ -220,6 +227,8 @@ export class Pry20220181Blockchain {
             administeredDosesToReturn.push(new AdministeredDose(element.ID, element.DoseId ,element.ChildId , element.HealthCenterId ,
                 element.HealthPersonnelId, element.DoseDate, element.VaccinationCampaignId, element.VaccinationAppointmentId))
         }
+
+        await this.CloseConnectionWithBlockchain();
         return administeredDosesToReturn;
     }
 
@@ -227,6 +236,7 @@ export class Pry20220181Blockchain {
      * Submit a transaction synchronously, blocking until it has been committed to the ledger.
      */
     async registerDoseAdministration(administeredDose: AdministeredDose): Promise<void> {
+        let contract = await this.StablishConnectionWithBlockchain();
         console.log('\n--> Submit Transaction: RegisterDoseAdministration, creates new administered dose with administeredDoseId, doseId, childId, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId arguments');
 
         //#region VALIDATE REQUIRED FIELDS ADMINISTERED DOSE
@@ -244,7 +254,7 @@ export class Pry20220181Blockchain {
         }
         //#endregion 
 
-        // await this.contract.submitTransaction(
+        // await contract.submitTransaction(
         //     'RegisterDoseAdministration',
         //     administeredDose.administeredDoseId,
         //     administeredDose.doseId.toString(),
@@ -257,19 +267,14 @@ export class Pry20220181Blockchain {
         // );
 
         console.log('*** Transaction RegisterDoseAdministration committed successfully');
+        await this.CloseConnectionWithBlockchain();
     }
 
-
-
-    //#region Utils Functions
-    async main(): Promise<any> {
-
-        await this.displayInputParameters();
-
+    private async StablishConnectionWithBlockchain() : Promise<Contract> {
         // The gRPC client connection should be shared by all Gateway connections to this endpoint.
-        const client = await this.newGrpcConnection();
+        this.client = await this.newGrpcConnection();
 
-        const gateway = connect({
+        this.gateway = connect({
             client,
             identity: await this.newIdentity(),
             signer: await this.newSigner(),
@@ -288,41 +293,24 @@ export class Pry20220181Blockchain {
             },
         });
 
-        let result = null;
-
         try {
             // Get a network instance representing the channel where the smart contract is deployed.
-            const network = gateway.getNetwork(this.channelName);
+            const network = this.gateway.getNetwork(this.channelName);
 
             // Get the smart contract from the network.
             this.contract = network.getContract(this.chaincodeName);
 
-            // Initialize a set of dose data on the ledger using the chaincode 'InitLedger' function.
-            await this.initLedger();
-
-            // // Return all the current doses on the ledger.
-            // await getAllDoses(contract);
-
-            // // Create a new dose on the ledger.
-            // await createDose(contract);
-
-            // Return all the doses of the specified child on the ledger.
-            // await getAllDosesByChildId(contract,'1');
-            result = await this.getAllAdministeredDosesByChildId(2);
-            console.log("Call REsult: ", result);
-            // // Update an existing dose asynchronously.
-            // await transferDoseAsync(contract);
-
-            // // Get the dose details by doseID.
-            // await readDoseByID(contract);
-
-            // // Update an dose which does not exist.
-            // await updateNonExistentDose(contract)
-        } finally {
-            gateway.close();
-            client.close();
-            return result;
+            return this.contract;
+        } 
+        catch {
+            this.gateway.close();
+            this.client.close();
         }
+    }
+
+    private async CloseConnectionWithBlockchain() : Promise<void>{
+        this.gateway.close();
+        this.client.close();
     }
 
     private async newGrpcConnection(): Promise<grpc.Client> {

@@ -11,6 +11,7 @@ const fastify = Fastify({
 const API_KEY = 'pry20220181';
 
 fastify.addHook('onRequest', async (request, reply) => {
+  //https://www.fastify.io/docs/latest/Reference/Hooks/
   const apiKey = request.headers['api-key'];
   if(apiKey != API_KEY){
     console.log(`THE KEY ${apiKey} IS NOT VALID`)
