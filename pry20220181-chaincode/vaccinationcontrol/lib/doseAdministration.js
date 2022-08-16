@@ -26,7 +26,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '1',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations1'
             },
             {
                 ID: 'a4d5668a-24aa-411d-ad83-cb99333e79a7',
@@ -36,7 +37,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '2',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations2'
             },
             {
                 ID: '1c7ccb39-b77e-4528-9b78-db7634023af2',
@@ -46,7 +48,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '3',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations3'
             },
             {
                 ID: 'd128789d-d598-4d53-b895-4d7c90e854b4',
@@ -56,7 +59,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '3',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations4'
             },
             {
                 ID: '29dcfbe2-7887-4f13-9e67-ffb14df7cdaf',
@@ -66,7 +70,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '2',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations5'
             },
             //#endregion
             //#region CHILD 2
@@ -78,7 +83,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '2',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations6'
             },
             {
                 ID: '7c9fffae-1fc0-45d1-b4cd-ad1bc11f7455',
@@ -88,7 +94,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '1',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations7'
             },
             {
                 ID: '25d1ff31-1e11-47e6-8a46-167d320588d6',
@@ -98,7 +105,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '2',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations8'
             },
             {
                 ID: 'b0bcf9f9-47e5-4204-8d47-dafc128b088d',
@@ -108,7 +116,8 @@ class DoseAdministration extends Contract {
                 HealthPersonnelId: '2',
                 DoseDate: new Date().toISOString(),
                 VaccinationCampaignId: '0',
-                VaccinationAppointmentId: '0'
+                VaccinationAppointmentId: '0',
+                Observations: 'Observations9'
             }
             //#endregion
         ];
@@ -132,7 +141,7 @@ class DoseAdministration extends Contract {
     vaccinationAppointmentId (FK, NN) 
     */
     async RegisterDoseAdministration(ctx, administeredDoseId, doseId, childId
-        , healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId) {
+        , healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId, observations) {
         const exists = await this.DoseExists(ctx, administeredDoseId);
         if (exists) {
             throw new Error(`The Dose ${administeredDoseId} already exists`);
@@ -146,7 +155,8 @@ class DoseAdministration extends Contract {
             HealthPersonnelId: healthPersonnelId,
             DoseDate: doseDate,
             VaccinationCampaignId: vaccinationCampaignId,
-            VaccinationAppointmentId: vaccinationAppointmentId
+            VaccinationAppointmentId: vaccinationAppointmentId,
+            Observations: observations
         };
         //we insert data in alphabetic order using 'json-stringify-deterministic' and 'sort-keys-recursive'
         await ctx.stub.putState(administeredDoseId, Buffer.from(stringify(sortKeysRecursive(Dose))));
