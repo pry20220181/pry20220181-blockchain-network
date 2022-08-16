@@ -15,8 +15,9 @@ export class AdministeredDose {
     doseDate: string;
     vaccinationCampaignId: number;
     vaccinationAppointmentId: number;
+    observations: string;
   
-    constructor(administeredDoseId: string, doseId? : number, childId? : number, healthCenterId? : number, healthPersonnelId? : number, doseDate? : string, vaccinationCampaignId? : number, vaccinationAppointmentId? : number){
+    constructor(administeredDoseId: string, doseId? : number, childId? : number, healthCenterId? : number, healthPersonnelId? : number, doseDate? : string, vaccinationCampaignId? : number, vaccinationAppointmentId? : number, observations? : string){
       this.administeredDoseId = administeredDoseId;
       this.doseId = doseId ?? 0;
       this.childId = childId ?? 0;
@@ -25,6 +26,7 @@ export class AdministeredDose {
       this.doseDate = doseDate ?? new Date().toISOString();
       this.vaccinationCampaignId = vaccinationCampaignId ?? 0;
       this.vaccinationAppointmentId = vaccinationAppointmentId ?? 0;
+      this.observations = observations ?? 'Sin Observacion';
     }
   }
 
@@ -103,102 +105,6 @@ export class Pry20220181Blockchain {
         const resultBytes = await contract.evaluateTransaction('ReadAdministeredDosesByChildId', childId.toString());
         const resultJson = this.utf8Decoder.decode(resultBytes);
         const result = JSON.parse(resultJson);
-        // const result = [
-        //     //#region CHILD 1
-        //     {
-        //         ID: 'd7028f69-8ca9-4c75-b35e-cff302b24067',
-        //         DoseId: '1',
-        //         ChildId: '1',
-        //         HealthCenterId: '1',
-        //         HealthPersonnelId: '1',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: 'a4d5668a-24aa-411d-ad83-cb99333e79a7',
-        //         DoseId: '2',
-        //         ChildId: '1',
-        //         HealthCenterId: '1',
-        //         HealthPersonnelId: '2',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: '1c7ccb39-b77e-4528-9b78-db7634023af2',
-        //         DoseId: '3',
-        //         ChildId: '1',
-        //         HealthCenterId: '2',
-        //         HealthPersonnelId: '3',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: 'd128789d-d598-4d53-b895-4d7c90e854b4',
-        //         DoseId: '4',
-        //         ChildId: '1',
-        //         HealthCenterId: '2',
-        //         HealthPersonnelId: '3',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: '29dcfbe2-7887-4f13-9e67-ffb14df7cdaf',
-        //         DoseId: '5',
-        //         ChildId: '1',
-        //         HealthCenterId: '1',
-        //         HealthPersonnelId: '2',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     //#endregion
-        //     //#region CHILD 2
-        //     {
-        //         ID: 'cc5bcc2f-576e-4f72-b2eb-0aa39f17466c',
-        //         DoseId: '1',
-        //         ChildId: '2',
-        //         HealthCenterId: '1',
-        //         HealthPersonnelId: '2',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: '7c9fffae-1fc0-45d1-b4cd-ad1bc11f7455',
-        //         DoseId: '2',
-        //         ChildId: '2',
-        //         HealthCenterId: '1',
-        //         HealthPersonnelId: '1',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: '25d1ff31-1e11-47e6-8a46-167d320588d6',
-        //         DoseId: '3',
-        //         ChildId: '2',
-        //         HealthCenterId: '2',
-        //         HealthPersonnelId: '2',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     },
-        //     {
-        //         ID: 'b0bcf9f9-47e5-4204-8d47-dafc128b088d',
-        //         DoseId: '4',
-        //         ChildId: '2',
-        //         HealthCenterId: '2',
-        //         HealthPersonnelId: '2',
-        //         DoseDate: new Date().toISOString(),
-        //         VaccinationCampaignId: '0',
-        //         VaccinationAppointmentId: '0'
-        //     }
-        //     //#endregion
-        // ];
         const numberOfAdministeredDoses = result.length;
         console.log(`*** Result (Doses of the Child ${childId}):`, result);
 
@@ -207,7 +113,7 @@ export class Pry20220181Blockchain {
         for (let i = 0; i < numberOfAdministeredDoses; i++) {
             const element = result[i];
             administeredDosesToReturn.push(new AdministeredDose(element.ID, element.DoseId ,element.ChildId , element.HealthCenterId ,
-                element.HealthPersonnelId, element.DoseDate, element.VaccinationCampaignId, element.VaccinationAppointmentId))
+                element.HealthPersonnelId, element.DoseDate, element.VaccinationCampaignId, element.VaccinationAppointmentId, element.observations))
         }
 
         await this.CloseConnectionWithBlockchain();
@@ -252,6 +158,7 @@ export class Pry20220181Blockchain {
             administeredDose.doseDate,
             administeredDose.vaccinationCampaignId.toString(),
             administeredDose.vaccinationAppointmentId.toString(),
+            administeredDose.observations
         );
 
         console.log('*** Transaction RegisterDoseAdministration committed successfully');
