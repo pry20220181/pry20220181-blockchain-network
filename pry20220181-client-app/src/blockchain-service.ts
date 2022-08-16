@@ -113,7 +113,7 @@ export class Pry20220181Blockchain {
         for (let i = 0; i < numberOfAdministeredDoses; i++) {
             const element = result[i];
             administeredDosesToReturn.push(new AdministeredDose(element.ID, element.DoseId ,element.ChildId , element.HealthCenterId ,
-                element.HealthPersonnelId, element.DoseDate, element.VaccinationCampaignId, element.VaccinationAppointmentId, element.observations))
+                element.HealthPersonnelId, element.DoseDate, element.VaccinationCampaignId, element.VaccinationAppointmentId, element.Observations))
         }
 
         await this.CloseConnectionWithBlockchain();
