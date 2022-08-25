@@ -1,6 +1,6 @@
 test:
-  name: "Currency Contract Benchmarking"
-  description: "This benchmark scenario will use currency contract transactions, from minting to transfering to redeeming."
+  name: "Register Administration of Doses Benchmarking"
+  description: "This benchmark scenario will use vaccination contract transactions, to register an administered dose."
   workers:
     type: local
     number: 3
@@ -11,7 +11,7 @@ test:
         type: fixed-rate
         opts:
           tps: 25
-      callback: benchmarks/callbacks/foodcontrol/currency/mint.js
+      callback: benchmarks/callbacks/vaccination/administered-doses/mint.js
       arguments:
         currencyCode: USD
         minterOrg: Org1

@@ -20,7 +20,7 @@ const logger = require("@hyperledger/caliper-core").CaliperUtils.getLogger(
 
 module.exports.info = "Mint callback";
 
-const contractID = "foodmarketplace";
+const contractID = "vaccinationcontrol";
 const version = "v0.1";
 
 // save the objects during init
@@ -59,22 +59,22 @@ module.exports.init = async (blockchain, context, args) => {
   let minter = args.minter;
 
   // Set the trustline between minter and receiver first
-  try {
-    console.log(
-      `Client ${clientIdx}: Setting trustline for ${receiver} to receive from ${minter}`
-    );
-    const trustlineArgs = {
-      chaincodeFunction: currencyCode + "CurrencyContract:SetTrustline",
-      invokerIdentity: receiverIdentity,
-      chaincodeArguments: [minter, true, "-1"],
-      targetPeers: targetPeers,
-    };
-    await bc.bcObj.invokeSmartContract(ctx, contractID, version, trustlineArgs);
-  } catch (error) {
-    console.log(
-      `Client ${clientIdx}: Smart Contract threw with error: ${error}`
-    );
-  }
+  // try {
+  //   console.log(
+  //     `Client ${clientIdx}: Setting trustline for ${receiver} to receive from ${minter}`
+  //   );
+  //   const trustlineArgs = {
+  //     chaincodeFunction: currencyCode + "CurrencyContract:SetTrustline",
+  //     invokerIdentity: receiverIdentity,
+  //     chaincodeArguments: [minter, true, "-1"],
+  //     targetPeers: targetPeers,
+  //   };
+  //   await bc.bcObj.invokeSmartContract(ctx, contractID, version, trustlineArgs);
+  // } catch (error) {
+  //   console.log(
+  //     `Client ${clientIdx}: Smart Contract threw with error: ${error}`
+  //   );
+  // }
 
   // Create the private data required for minting
   privateData = {
@@ -91,16 +91,18 @@ module.exports.init = async (blockchain, context, args) => {
 
 module.exports.run = async () => {
   let txArgs = {
-    chaincodeFunction: currencyCode + "CurrencyContract:Mint",
-    chaincodeArguments: [amount, receiver],
-    transientMap: privateData,
+    chaincodeFunction: "DoseAdministration:RegisterDoseAdministration",
+    chaincodeArguments: ["1", "1", "1", "1", "1", "2022-08-10", "0", "0", "Observations"], 
+    //administeredDoseId, doseId, childId
+    //, healthCenterId, healthPersonnelId, doseDate, vaccinationCampaignId, vaccinationAppointmentId, observations
+    //transientMap: privateData,
     invokerIdentity: minterIdentity,
     targetPeers: targetPeers,
   };
 
   return bc.bcObj.invokeSmartContract(
     ctx,
-    "foodmarketplace",
+    "vaccinationcontrol",
     "v1.0",
     txArgs,
     100
