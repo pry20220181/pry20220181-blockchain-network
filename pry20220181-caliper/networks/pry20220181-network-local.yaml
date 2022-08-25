@@ -1,0 +1,153 @@
+---
+name: pry20220181-network-local
+version: "1.0"
+caliper:
+  blockchain: fabric
+organizations:
+  SuSalud:
+    mspid: SuSaludMSP
+    peers:
+      - peer0.susalud.pry20220181.com
+    #certificateAuthorities:
+    #  - #  int.ca.susalud.pry20220181.com:
+    adminPrivateKey:
+      path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/users/admin@susalud.pry20220181.com/msp/keystore/priv.key
+    signedCert:
+      path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/users/admin@susalud.pry20220181.com/msp/signcerts/cert.pem
+  Minsa:
+    mspid: MinsaMSP
+    peers:
+      - peer0.minsa.pry20220181.com
+    #certificateAuthorities:
+    #  - #  int.ca.minsa.pry20220181.com:
+    adminPrivateKey:
+      path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/users/admin@minsa.pry20220181.com/msp/keystore/priv.key
+    signedCert:
+      path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/users/admin@minsa.pry20220181.com/msp/signcerts/cert.pem
+  Hospitals:
+    mspid: HospitalsMSP
+    peers:
+      - peer0.hospitals.pry20220181.com
+    #certificateAuthorities:
+    #  - #  int.ca.hospitals.pry20220181.com:
+    adminPrivateKey:
+      path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/users/admin@3.pry20220181.com/msp/keystore/priv.key
+    signedCert:
+      path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/users/admin@hospitals.pry20220181.com/msp/signcerts/cert.pem
+channels:
+  vaccination:
+    orderers:
+      - orderer.pry20220181.com
+    peers:
+      peer0.susalud.pry20220181.com:
+        eventSource: true
+      peer0.minsa.pry20220181.com:
+        eventSource: true
+      peer0.hospitals.pry20220181.com:
+        eventSource: true
+    created: true
+    chaincodes:
+      - id: vaccinationcontrol
+        version: v1.0
+        language: node
+clients:
+  client@susalud.pry20220181.com:
+    client:
+      organization: SuSalud
+      connection:
+        timeout:
+          peer:
+            endorser: "300"
+      credentialStore:
+        path: tmp/hfc-kvs/susalud
+        cryptoStore:
+          path: tmp/hfc-kvs/susalud
+      clientPrivateKey:
+        path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/users/client@susalud.pry20220181.com/msp/keystore/priv.key
+      clientSignedCert:
+        path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/users/client@susalud.pry20220181.com/msp/signcerts/cert.pem
+  client@minsa.pry20220181.com:
+    client:
+      organization: Minsa
+      connection:
+        timeout:
+          peer:
+            endorser: "300"
+      credentialStore:
+        path: tmp/hfc-kvs/minsa
+        cryptoStore:
+          path: tmp/hfc-kvs/minsa
+      clientPrivateKey:
+        path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/users/client@minsa.pry20220181.com/msp/keystore/priv.key
+      clientSignedCert:
+        path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/users/client@minsa.pry20220181.com/msp/signcerts/cert.pem
+  client@hospitals.pry20220181.com:
+    client:
+      organization: Hospitals
+      connection:
+        timeout:
+          peer:
+            endorser: "300"
+      credentialStore:
+        path: tmp/hfc-kvs/hospitals
+        cryptoStore:
+          path: tmp/hfc-kvs/hospitals
+      clientPrivateKey:
+        path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/users/client@hospitals.pry20220181.com/msp/keystore/priv.key
+      clientSignedCert:
+        path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/users/client@hospitals.pry20220181.com/msp/signcerts/cert.pem
+peers:
+  peer0.susalud.pry20220181.com:
+    url: grpcs://localhost:7051
+    tlsCACerts:
+      path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/tls-int/ca-chain.pem
+    grpcOptions:
+      ssl-target-name-override: peer0.susalud.pry20220181.com
+      hostnameOverride: peer0.susalud.pry20220181.com
+      grpc.keepalive_time_ms: 600000
+  peer0.minsa.pry20220181.com:
+    url: grpcs://localhost:8051
+    tlsCACerts:
+      path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/tls-int/ca-chain.pem
+    grpcOptions:
+      ssl-target-name-override: peer0.minsa.pry20220181.com
+      hostnameOverride: peer0.minsa.pry20220181.com
+      grpc.keepalive_time_ms: 600000
+  peer0.hospitals.pry20220181.com:
+    url: grpcs://localhost:9051
+    tlsCACerts:
+      path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/tls-int/ca-chain.pem
+    grpcOptions:
+      ssl-target-name-override: peer0.hospitals.pry20220181.com
+      hostnameOverride: peer0.hospitals.pry20220181.com
+      grpc.keepalive_time_ms: 600000
+orderers:
+  orderer.pry20220181.com:
+    url: grpcs://localhost:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.susalud.pry20220181.com
+    tlsCACerts:
+      path: ../pry20220181-network/fabric-ca/susalud.pry20220181.com/tls-int/ca-chain.pem
+  # orderer.minsa.pry20220181.com:
+  #   url: grpcs://localhost:8050
+  #   grpcOptions:
+  #     ssl-target-name-override: orderer.minsa.pry20220181.com
+  #   tlsCACerts:
+  #     path: ../pry20220181-network/fabric-ca/minsa.pry20220181.com/tls-int/ca-chain.pem
+  # orderer.hospitals.pry20220181.com:
+  #   url: grpcs://localhost:9050
+  #   grpcOptions:
+  #     ssl-target-name-override: orderer.hospitals.pry20220181.com
+  #   tlsCACerts:
+  #     path: ../pry20220181-network/fabric-ca/hospitals.pry20220181.com/tls-int/ca-chain.pem
+#certificateAuthorities:
+#  int.ca.susalud.pry20220181.com:
+#    url: http://localhost:7056
+#    caName: int.ca.susalud.pry20220181.com
+#    #tlsCACerts:
+#    #  pem:
+#    #    - |
+#    #      ${CAPEM}
+#    httpOptions:
+#      verify: false
+
