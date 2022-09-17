@@ -121,6 +121,25 @@ export class Pry20220181Blockchain {
     }
 
     /**
+     * Evaluate a transaction to query ledger state filtering by administeredId.
+     */
+     async getAdministeredDosesById(administeredDoseId: string): Promise<AdministeredDose> {
+        let contract = await this.StablishConnectionWithBlockchain();
+        console.log(`\n--> Evaluate Transaction: ReadDose, function returns the administered doses with ID ${administeredDoseId} on the ledger`);
+
+        const resultBytes = await contract.evaluateTransaction('ReadDose', administeredDoseId);
+        const resultJson = this.utf8Decoder.decode(resultBytes);
+        const result = JSON.parse(resultJson);
+        console.log(`*** Result (Doses with Id ${administeredDoseId}):`, result);
+
+        let administeredDoseToReturn = new AdministeredDose(result.ID, result.DoseId ,result.ChildId , result.HealthCenterId ,
+            result.HealthPersonnelId, result.DoseDate, result.VaccinationCampaignId, result.VaccinationAppointmentId, result.Observations);
+
+        await this.CloseConnectionWithBlockchain();
+        return administeredDoseToReturn;
+    }
+
+    /**
      * Submit a transaction synchronously, blocking until it has been committed to the ledger.
      */
     //Performance Notes: al llamar desde la API se demora entre 2 a 4 segundos
