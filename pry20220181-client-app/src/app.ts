@@ -43,6 +43,24 @@ fastify.get(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
   }
 })
 
+/*Get by administred id */
+fastify.get(`${PATHS.ADMINISTERED_DOSES}/:doseId`, async (request, reply) => {
+  console.log(request.query);
+  const { doseId } = request.params;
+
+  try {
+    let blockchainNetwork = new Pry20220181Blockchain();
+
+    let administeredDoses = await blockchainNetwork.getAdministeredDosesById(doseId);
+
+    return administeredDoses;
+  } 
+  catch (error: any) {
+    console.log(error.message);
+    return {'error': error.message} 
+  }
+})
+
 fastify.post(PATHS.ADMINISTERED_DOSES, async (request, reply) => {
   var administeredDose =  new AdministeredDose(randomUUID());
   Object.assign(administeredDose, request.body);
